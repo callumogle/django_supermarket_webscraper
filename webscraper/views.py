@@ -23,6 +23,33 @@ class MyView(View):
     def get(self,request):
         return render(request,'webscraper/home.html')
 
+def grab_image(element, image_css):
+    image = element.select_one(image_css)
+    try:
+
+        link = image['src']
+    except KeyError as e:
+        print("really should be finding the images, probably some dumb thing")
+        print(e)
+        return "N/A"
+
+    try:
+        img_name = image['alt']
+        img_name = img_name.replace("\r", "").replace(
+        ' ', '-').replace('/', '') + ".jpg"
+    except KeyError as e:
+        print(e)
+        img_name = "N/A"
+    
+
+    if os.path.isfile(f"{os.getcwd()}/webscraper/static/webscraper/asda/{img_name}"):
+        print(f"file: {img_name} already exists")
+    else:
+        with open(f"{os.getcwd()}/webscraper/static/webscraper/asda/{img_name}", 'wb') as f:
+            im = requests.get(link)
+            f.write(im.content)
+            print('Writing: ', img_name)
+    return img_name
 
 def Asda_scrape(request):
     
@@ -44,10 +71,10 @@ def Asda_scrape(request):
         last_height = driver.execute_script("return document.body.scrollHeight")
         # scroll down the webpage, loading in images.
         while True:
+            sleep(1)
             rand_y = randint(750, 1000)
             driver.execute_script(f"window.scrollBy(0, {rand_y});")
             new_height = driver.execute_script("return window.pageYOffset")
-            sleep(1)
             print(new_height)
             if new_height == last_height:
                 break
@@ -61,7 +88,7 @@ def Asda_scrape(request):
         items = main.select("li.co-item")
 
         for elem in items:
-           # img_name = grab_image(elem,'img.co-item__image')
+            img_name = grab_image(elem,'img.co-item__image')
             
             try:
                 name = elem.select_one('a.co-product__anchor').text
@@ -82,5 +109,11 @@ def Asda_scrape(request):
                 unit_price = "n/a"
 
             # inserts data into sql database using the model
-            Asdascrape.objects.create(store='Asda', item_name=name, item_price=price, unit_price=unit_price, item_searched='apples', item_url= driver.current_url)
+            Asdascrape.objects.create(
+                                    store='Asda', item_name=name,
+                                    item_image=img_name,
+                                    item_price=price, unit_price=unit_price, 
+                                    item_searched='apples', item_url= driver.current_url
+                                    )
+    print("script ended")
     return render(request,'webscraper/home.html')
