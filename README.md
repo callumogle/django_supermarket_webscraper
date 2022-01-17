@@ -10,6 +10,6 @@ download the requirements.txt
 to run use:
 
 ## To do
-- add image scraping functionality to all modules
-- combine all modules into one script, utilise celery and rabbitMQ to run them simultaneously
+- make a template with a form that will pass on a users desired item into the view then into the webscraping function
+- improve the display template
 - make good readme
