@@ -19,9 +19,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # Create your views here.
 
-class MyView(View):
+class Home_view(View):
     def get(self,request):
-        return render(request,'webscraper/home.html')
+        context = {"context" : Asdascrape.objects.all()}
+        return render(request,'webscraper/displayresults.html', context)
 
 def grab_image(element, image_css):
     image = element.select_one(image_css)
@@ -52,7 +53,7 @@ def grab_image(element, image_css):
     return img_name
 
 def Asda_scrape(request):
-    
+    return render(request,'webscraper/home.html')
     option = webdriver.ChromeOptions()
     # makes chrome incognito so no cookies affect search result
     option.add_argument("incognito")

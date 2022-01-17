@@ -1,0 +1,7 @@
+{% extends 'webscraper/base.html' %}
+
+{% block content %}
+    {% for x in context %}
+        <div>{{ x.date_searched }}</div>
+    {% endfor %}
+{% endblock content %}

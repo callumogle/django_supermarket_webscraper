@@ -3,5 +3,6 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.Asda_scrape, name='webscraper-home'),
+    path('asdascrape', views.Asda_scrape, name='scrape-asda'),
+    path('', views.Home_view.as_view(), name='webscraper-home'),
     ]
