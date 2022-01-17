@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import View
 
-from .tasks import asda_scrape, concurrentfuturestest
+from .tasks import webscraper
 
 
 # Create your views here.
@@ -15,5 +15,5 @@ class Home_view(View):
 
 
 def Asda_scrape(request):
-    concurrentfuturestest()
+    webscraper()
     return render(request,'webscraper/home.html')
