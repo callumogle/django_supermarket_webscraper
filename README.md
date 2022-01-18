@@ -10,6 +10,7 @@ download the requirements.txt
 to run use:
 
 ## To do
-- make a template with a form that will pass on a users desired item into the view then into the webscraping function
+- during a search a loading thing on the search page should show, or anything that clearly shows that the websites working
+- after finishing a search a page with the results should be shown
 - improve the display template
 - make good readme

@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup as bs
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotInteractableException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException
 from time import sleep, strftime
 from random import randint
 import requests
@@ -234,12 +234,18 @@ def morrisons_scrape(search_term):
             print("the cookies button has already been clicked")
         except NoSuchElementException:
             print("the cookies button does not exist")
+        except ElementClickInterceptedException:
+            # not sure whats causing this error
+            print("not sure whats causing this error")
+            button = driver.find_element_by_id("onetrust-accept-btn-handler")
+            driver.execute_script("arguments[0].click();", button)
+            
         
         # scroll the page to load images
         for _ in range(4):
             rand_y = randint(1000, 2000)
             driver.execute_script(f"window.scrollBy(0, {rand_y});")
-            # above code tells seleni    um to scroll the window by 1080 pixels down
+            # above code tells selenium to scroll the window by 1080 pixels down
             # basically puts js code into the console in the developer tool tings
 
             # wait to load page
@@ -507,9 +513,9 @@ def tesco_scrape(search_term):
     return results
 
 
-def webscraper():
+def webscraper(search_term):
     # get this through a form
-    search_term = 'apples'
+    search_term = search_term.replace("%20", " ")
     
     todays_date = strftime("%Y-%m-%d")
     do_search = True
@@ -536,14 +542,14 @@ def webscraper():
     # cursor.close()
     
     if do_search:
-        tasks = [ tesco_scrape]
+        #tasks = [ asda_scrape, aldi_scrape, morrisons_scrape, sainsbury_scrape, tesco_scrape]
         # so i can easily disable/enable different functions
-        # tasks = []
-        # tasks += asda_scrape
-        # tasks += aldi_scrape
-        # tasks += morrisons_scrape
-        # tasks += sainsbury_scrape
-        # tasks += tesco_scrape
+        tasks = []
+        tasks += [asda_scrape]
+        tasks += [aldi_scrape]
+        tasks += [morrisons_scrape]
+        tasks += [sainsbury_scrape]
+        tasks += [tesco_scrape]
         with ProcessPoolExecutor(max_workers=5) as ex:
             # using list comprehension creates a list of the running tasks based on above tasks list 
             # and then calls each function in the order of the list feeding search_term to each function

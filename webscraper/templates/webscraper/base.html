@@ -12,10 +12,11 @@
 <body>
     <div id="navbar">
         <a href="#">Home</a>
-        <a href="#">News</a>
+        <a href="{% url 'item-search' %}">Search</a>
         <a href="#">Contact</a>
     </div>
     <script>
+        // taken from w3 schools
         // When the user scrolls the page, execute myFunction
         window.onscroll = function() {myFunction()};
 
