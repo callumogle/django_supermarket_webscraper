@@ -374,7 +374,7 @@ def sainsbury_scrape(search_term):
 
 
                     item_details = {"name": name.strip(), "image_name": img_name, "price": price,
-                                    "unit_price": unit_price, "url": url, "store": "sainsburys"}
+                                    "unit_price": unit_price, "url": url, "store": "sainsbury"}
                     results.append(item_details)
 
             return results

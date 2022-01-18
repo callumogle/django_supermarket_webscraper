@@ -13,9 +13,12 @@ from .forms import SearchForm
 class Home_view(View):
     def get(self,request):
         todays_date = strftime("%Y-%m-%d")
-        context = {"context" : Asdascrape.objects.filter(item_searched='apples', date_searched=todays_date)}
+        # taken and modified from ron_g https://stackoverflow.com/questions/20555673/django-query-get-last-n-records
+        last_fifty = Asdascrape.objects.filter(date_searched=todays_date).order_by('-id')[:50:-1]
+        context = {"context" : last_fifty}
         return render(request,'webscraper/displayresults.html', context)
 
+# calls an instance of the form and passes into the search template
 def Get_search(request):
     # dont forsee an instance of using POST with this form but still
     if request.method == 'POST':
@@ -25,9 +28,18 @@ def Get_search(request):
     return render(request, 'webscraper/search.html',{'form':form})
 
 def Asda_scrape(request):
-    
+    # definetly can do this better
     if request.GET.get('item_to_search', None):
-        webscraper(request.GET['item_to_search'])
+        todays_date = strftime("%Y-%m-%d")
+        search_query = Asdascrape.objects.filter(item_searched=request.GET['item_to_search'], date_searched=todays_date)
+        if search_query.count() > 0:
+            context = {"context" : search_query}
+        else:
+            webscraper(request.GET['item_to_search'])
+            context = Asdascrape.objects.filter(item_searched=request.GET['item_to_search'], date_searched=todays_date)
+
+        return render(request,'webscraper/displayresults.html', context)
     else:
         return HttpResponse("<div>goodbye</div>")
-    return render(request,'webscraper/home.html')
+    
+    
