@@ -3,4 +3,4 @@ from django import forms
 
 
 class SearchForm(forms.Form):
-    item_to_search = forms.CharField(label="search term", max_length=50)
+    item_to_search = forms.CharField(label="Search term", max_length=50)

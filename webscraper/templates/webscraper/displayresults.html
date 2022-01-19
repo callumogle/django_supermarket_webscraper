@@ -1,10 +1,37 @@
 {% extends 'webscraper/base.html' %}
 {% load static %}
-
+{% block title %}
+    <title>Results</title>
+{% endblock title %}
 {% block content %}
-    {% for x in context %}
-        <!-- <img src="{% static 'webscraper/asda/Twinings-Superblends-Sleep-with-Spiced-Apple-and-Camomile,-20-Tea-Bags.jpg' %}" alt="My image"> -->
-        <img src="static/webscraper/{{ x.store }}/{{x.item_image}}.jpg" alt="My image" height="100px" width="100px">
+    <div id="resultscontainer">
+        {% for x in context %}
         
-    {% endfor %}
+            <div class="itemcontainer">
+
+                <div class="imagecontainer">
+                    <img src="static/webscraper/{{ x.store }}/{{x.item_image}}.jpg" alt="My image" height="100px" width="100px">
+                </div>
+                <div class="item_info">
+                    <div class="store_name">
+                        {{x.store|capfirst}}
+                    </div>
+                    <div class="item_name">
+                        {{x.item_name}}
+                    </div>
+                    <div class="price">
+                        £{{x.item_price}}
+                    </div>
+                    <div class="unit_price">
+                        {{x.unit_price}}
+                    </div>
+                </div>
+                
+                <div>
+                    
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+            
 {% endblock content %}

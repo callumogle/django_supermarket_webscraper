@@ -23,7 +23,7 @@ def grab_image(store,element, image_css):
     img_name = None
     try:
         # sainsbury's website does not have a proper alt tag for images from brand promotion search results
-        if store == "sainsbury":
+        if store == "sainsbury's":
             if element.find("div",class_="pt__image-wrapper"):
                 image = element.select_one(image_css)
                 img_name = image['alt']
@@ -346,7 +346,7 @@ def sainsbury_scrape(search_term):
                 items = main.select("li.gridItem")
 
                 for elem in items:
-                    img_name = grab_image("sainsbury",elem,'img')
+                    img_name = grab_image("sainsbury's",elem,'img')
                     try:
                         name = elem.select_one('h3').text
                     except NoSuchElementException:
@@ -374,7 +374,7 @@ def sainsbury_scrape(search_term):
 
 
                     item_details = {"name": name.strip(), "image_name": img_name, "price": price,
-                                    "unit_price": unit_price, "url": url, "store": "sainsbury"}
+                                    "unit_price": unit_price, "url": url, "store": "sainsbury's"}
                     results.append(item_details)
 
             return results
@@ -397,7 +397,7 @@ def sainsbury_scrape(search_term):
             items = soup.select("div.pt__content")
 
             for elem in items:
-                img_name = grab_image("sainsbury",elem,'img')
+                img_name = grab_image("sainsbury's",elem,'img')
                 try:
                     name = elem.select_one('h2').text
                 except NoSuchElementException:
@@ -427,7 +427,7 @@ def sainsbury_scrape(search_term):
                         
 
                 item_details = {"name": name.strip(), "image_name": img_name, "price": price,
-                                "unit_price": unit_price, "url": url, "store": "sainsburys"}
+                                "unit_price": unit_price, "url": url, "store": "sainsbury's"}
                                 
                 results.append(item_details)
                 

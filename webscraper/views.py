@@ -12,9 +12,9 @@ from .forms import SearchForm
 
 class Home_view(View):
     def get(self,request):
-        todays_date = strftime("%Y-%m-%d")
+        
         # taken and modified from ron_g https://stackoverflow.com/questions/20555673/django-query-get-last-n-records
-        last_fifty = Asdascrape.objects.filter(date_searched=todays_date).order_by('-id')[:50:-1]
+        last_fifty = Asdascrape.objects.filter().order_by('-id')[:50:-1]
         context = {"context" : last_fifty}
         return render(request,'webscraper/displayresults.html', context)
 

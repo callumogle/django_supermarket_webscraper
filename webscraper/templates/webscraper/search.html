@@ -1,8 +1,14 @@
 {% extends 'webscraper/base.html' %}
+{% block title%} <title>Search</title> {% endblock title %}
 {% block content %}
-    <form action="/asdascrape" method="get">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit">
-    </form>
+    <div id="searchformcont">
+        
+        <form action="/asdascrape" method="get">
+            <div>What are you interested in?</div>
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    
 {% endblock content %}
