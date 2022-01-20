@@ -489,17 +489,23 @@ def tesco_scrape(search_term):
         # explicit wait using a lambda (anonymous) function, waits until the function returns true
         # explicit wait doesnt seem to work for tesco's website
         #WebDriverWait(driver,timeout=10).until(lambda d: d.find_element(By.CLASS_NAME,'product-lists-wrapper'))
+
+        # WebDriverWait(driver,timeout=10).until(lambda d: d.execute_script("return document.readyState") == "complete")
         sleep(3)
         # images do not load if they are out of view, bring them into view while simulating human scrolling
         last_height = driver.execute_script("return document.body.scrollHeight")
        
         while True:
+            sleep(1)
             rand_y = randint(750, 1000)
             driver.execute_script(f"window.scrollBy(0, {rand_y});")
-            new_height = driver.execute_script("return window.pageYOffset")
-            sleep(1)
+            new_height = driver.execute_script("return window.pageYOffset;")
+            
             print(f"tesco + {new_height}")
             if new_height == last_height:
+                is_the_image_loaded_yet = driver.execute_script("return document.images[49].srcset;")
+                # WebDriverWait(driver,timeout=2).until(lambda d: d.execute_script("return document.images[49].srcset;") != "")
+                print(is_the_image_loaded_yet)
                 break
             else:
                 last_height = new_height
@@ -588,15 +594,19 @@ def webscraper(search_term):
         
         
         for running_task in running_tasks:
-            
-            for count, value in enumerate(running_task.result()):
-                print(count,value["store"], value["name"])
-                Asdascrape.objects.create(
-                                store=value["store"] , item_name=value["name"],
-                                item_image=value["image_name"],
-                                item_price=value["price"], unit_price=value["unit_price"], 
-                                item_searched=search_term.replace("%20", " "), item_url= value["url"]
-                                    )
+            try:
+
+                for count, value in enumerate(running_task.result()):
+                    print(count,value["store"], value["name"])
+                    Asdascrape.objects.create(
+                                    store=value["store"] , item_name=value["name"],
+                                    item_image=value["image_name"],
+                                    item_price=value["price"], unit_price=value["unit_price"], 
+                                    item_searched=search_term.replace("%20", " "), item_url= value["url"]
+                                        )
+            except AttributeError as AE:
+                print(AE)
+                print('likely, item not available at store')
     print("script ended")
 
 if __name__ == "__main__":
