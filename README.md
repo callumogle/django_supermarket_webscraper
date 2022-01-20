@@ -11,6 +11,5 @@ to run use:
 
 ## To do
 - during a search a loading thing on the search page should show, or anything that clearly shows that the websites working
-- add a template so that when an item is clicked on it will show that items price history
-- improve the display template
+- improve the display template and just the whole look of the website entirely 
 - make good readme

@@ -1,0 +1,18 @@
+{% extends 'webscraper/base.html' %}
+{% load static %}
+{% block title %}
+    <title>{{ product.item_name }}</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ product.item_name }}</h1>
+    <img src="../static/webscraper/{{ product.store }}/{{product.item_image}}.jpg" alt="My image">
+    
+    <br>
+    <br>
+    <h2 id="price_history">Price history</h2>
+    {% for i in item_history %}
+        <div>{{i.date_searched}}: £{{i.item_price}} {{i.unit_price}}</div>
+    {% endfor %}
+    <div>{{product.item_url}}</div>
+{% endblock content %}

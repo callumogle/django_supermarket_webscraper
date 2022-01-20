@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup as bs
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException
-from time import sleep, strftime
+from time import sleep
 from random import randint
 import requests
 import os
@@ -107,8 +107,17 @@ def asda_scrape(search_term):
             
             try:
                 name = elem.select_one('a.co-product__anchor').text
+                
             except NoSuchElementException:
                 name = "n/a"
+                
+            
+            try:
+                url = elem.select_one('a.co-product__anchor').get('href')
+                url = f"https://groceries.asda.com{url}"
+            except (NoSuchElementException, AttributeError):
+                pass
+
             try:
                 price = elem.select_one('strong.co-product__price').text
                 # remove formating from prices to allow them to go into database
@@ -124,7 +133,7 @@ def asda_scrape(search_term):
                 unit_price = "n/a"
             
             item_details = {"name": name, "image_name": img_name, "price": price,
-                            "unit_price": unit_price, "url": driver.current_url, 
+                            "unit_price": unit_price, "url": url, 
                             "store": "asda"}
             results.append(item_details)
 
@@ -170,8 +179,16 @@ def aldi_scrape(search_term):
             img_name = grab_image("aldi",elem,'img.img-fluid')
             try:
                 name = elem.select_one('a.text-default-font').text
+                
             except NoSuchElementException:
                 name = "n/a"
+
+            try:
+                url = elem.select_one('a.text-default-font').get('href')
+                url = f"https://groceries.aldi.co.uk{url}"
+            except (NoSuchElementException, AttributeError):
+                pass
+
             try:
                 price = elem.select_one('span.h4').text
                 price = price.replace("£", '')
@@ -188,7 +205,7 @@ def aldi_scrape(search_term):
             # remove formating from prices to allow them to go into database
 
             item_details = {"name": name, "image_name": img_name, "price": price,
-                            "unit_price": unit_price, "url": driver.current_url, 
+                            "unit_price": unit_price, "url": url, 
                             "store": "aldi"}
             results.append(item_details)
 
@@ -268,6 +285,12 @@ def morrisons_scrape(search_term):
                 name = elem.select_one('h4.fop-title').contents[0].text
             except NoSuchElementException:
                 name = "n/a"
+            
+            try:
+                url = elem.select_one('a').get('href')
+                url = f"https://groceries.morrisons.com{url}"
+            except (NoSuchElementException, AttributeError):
+                url = driver.current_url
             try:
                 price = elem.select_one('span.fop-price').text
                 # remove formating from prices to allow them to go into database
@@ -286,7 +309,7 @@ def morrisons_scrape(search_term):
                 unit_price = "n/a"
 
             item_details = {"name": name, "image_name": img_name, "price": price,
-                            "unit_price": unit_price, "url": driver.current_url, 
+                            "unit_price": unit_price, "url": url, 
                             "store": "morrisons"}
             results.append(item_details)
     return results
@@ -352,6 +375,10 @@ def sainsbury_scrape(search_term):
                     except NoSuchElementException:
                         name = "n/a"
                     try:
+                        url = elem.select_one('h3').a.get('href')
+                    except (NoSuchElementException, AttributeError):
+                        pass
+                    try:
                         price = elem.select_one('p.pricePerUnit').text
                         if price.find("p") != -1:
                             price = price.replace("p", "")
@@ -402,6 +429,11 @@ def sainsbury_scrape(search_term):
                     name = elem.select_one('h2').text
                 except NoSuchElementException:
                     name = "n/a"
+                
+                try:
+                    url = elem.select_one('a.pt__link').get('href')
+                except (NoSuchElementException, AttributeError):
+                    pass
                 try:
                     price = elem.select_one(
                         'div.undefined').text
@@ -491,6 +523,12 @@ def tesco_scrape(search_term):
                 name = elem.select_one('h3').text
             except NoSuchElementException:
                 name = "n/a"
+
+            try:
+                url = elem.select_one('a.ui__StyledLink-sc-18aswmp-0').get('href')
+                url = f"https://www.tesco.com{url}"
+            except (NoSuchElementException, AttributeError):
+                pass
             try:
                 price = elem.select_one('span.value').text
                 price = price.replace("£", '')
@@ -517,13 +555,6 @@ def webscraper(search_term):
     # get this through a form
     search_term = search_term.replace("%20", " ")
     
-    todays_date = strftime("%Y-%m-%d")
-    do_search = True
-   
-    if Asdascrape.objects.filter(item_searched=search_term, date_searched=todays_date).count() > 0:
-        print("item has already been searched for today")
-        do_search = False
-    
     # !r means get the official representation of the string i.e. it gives the quotation marks as well 'scraperesults' in this case
     # similar to calling repr(string), using this because this statement is looking for the table name as a string.
     # try:
@@ -541,30 +572,30 @@ def webscraper(search_term):
 
     # cursor.close()
     
-    if do_search:
-        #tasks = [ asda_scrape, aldi_scrape, morrisons_scrape, sainsbury_scrape, tesco_scrape]
-        # so i can easily disable/enable different functions
-        tasks = []
-        tasks += [asda_scrape]
-        tasks += [aldi_scrape]
-        tasks += [morrisons_scrape]
-        tasks += [sainsbury_scrape]
-        tasks += [tesco_scrape]
-        with ProcessPoolExecutor(max_workers=5) as ex:
-            # using list comprehension creates a list of the running tasks based on above tasks list 
-            # and then calls each function in the order of the list feeding search_term to each function
-            running_tasks = [ex.submit(task,search_term) for task in tasks]
+
+    #tasks = [ asda_scrape, aldi_scrape, morrisons_scrape, sainsbury_scrape, tesco_scrape]
+    # so i can easily disable/enable different functions
+    tasks = []
+    tasks += [asda_scrape]
+    tasks += [aldi_scrape]
+    tasks += [morrisons_scrape]
+    tasks += [sainsbury_scrape]
+    tasks += [tesco_scrape]
+    with ProcessPoolExecutor(max_workers=5) as ex:
+        # using list comprehension creates a list of the running tasks based on above tasks list 
+        # and then calls each function in the order of the list feeding search_term to each function
+        running_tasks = [ex.submit(task,search_term) for task in tasks]
+        
+        
+        for running_task in running_tasks:
             
-            
-            for running_task in running_tasks:
-                
-                for count, value in enumerate(running_task.result()):
-                    print(count,value["store"], value["name"])
-                    Asdascrape.objects.create(
-                                    store=value["store"] , item_name=value["name"],
-                                    item_image=value["image_name"],
-                                    item_price=value["price"], unit_price=value["unit_price"], 
-                                    item_searched=search_term.replace("%20", " "), item_url= value["url"]
+            for count, value in enumerate(running_task.result()):
+                print(count,value["store"], value["name"])
+                Asdascrape.objects.create(
+                                store=value["store"] , item_name=value["name"],
+                                item_image=value["image_name"],
+                                item_price=value["price"], unit_price=value["unit_price"], 
+                                item_searched=search_term.replace("%20", " "), item_url= value["url"]
                                     )
     print("script ended")
 

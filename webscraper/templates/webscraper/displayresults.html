@@ -13,23 +13,17 @@
                     <img src="static/webscraper/{{ x.store }}/{{x.item_image}}.jpg" alt="My image" height="100px" width="100px">
                 </div>
                 <div class="item_info">
-                    <div class="store_name">
-                        {{x.store|capfirst}}
-                    </div>
+                    <div class="store_name">{{x.store|capfirst}}</div>
                     <div class="item_name">
-                        {{x.item_name}}
+                        <a href="{% url 'item-detail' x.id %}">{{x.item_name}}</a>
                     </div>
-                    <div class="price">
-                        £{{x.item_price}}
-                    </div>
-                    <div class="unit_price">
-                        {{x.unit_price}}
-                    </div>
+
+                    <div class="price">£{{x.item_price}}</div>
+                    
+                    <div class="unit_price">{{x.unit_price}}</div>
                 </div>
                 
-                <div>
-                    
-                </div>
+                <div style="display:none;">{{x.item_url}}</div>
             </div>
         {% endfor %}
     </div>

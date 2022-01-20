@@ -1,7 +1,7 @@
-from telnetlib import SE
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import View
+from django.views.generic import DetailView
 
 from time import strftime
 
@@ -37,9 +37,25 @@ def Asda_scrape(request):
         else:
             webscraper(request.GET['item_to_search'])
             context = Asdascrape.objects.filter(item_searched=request.GET['item_to_search'], date_searched=todays_date)
+            context = {"context":context}
 
         return render(request,'webscraper/displayresults.html', context)
     else:
         return HttpResponse("<div>goodbye</div>")
     
     
+class ItemDetailView(DetailView):
+    model = Asdascrape
+    context_object_name = 'product'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print("hello",self.kwargs['pk'])
+        precontext = Asdascrape.objects.filter(pk=self.kwargs['pk'])[0]
+        context['item_history'] = Asdascrape.objects.filter(item_name=precontext)
+        return context
+
+def Item_view(request):
+    context = Asdascrape.objects.filter(item_name=request.GET.get('item_name'))
+
+    return render(request,'webscraper/asdascrape_detail.html',context)

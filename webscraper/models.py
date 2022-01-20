@@ -9,7 +9,7 @@ class Asdascrape(models.Model):
     unit_price = models.CharField(max_length=20, null=True) 
     item_searched = models.CharField(max_length=50)
     date_searched = models.DateField(default=timezone.now)
-    item_url = models.CharField(max_length=75)
+    item_url = models.CharField(max_length=255)
 
     def __str__(self):
         return self.item_name
